@@ -1,6 +1,6 @@
 # ToggleMaster – Tech Challenge Fase 1
 
-Documentação da Fase 1: diagrama de arquitetura e discussão sobre o 12-Factor App. O ToggleMaster é uma API de *Feature Flags* (Flask + PostgreSQL) construída como um monolito, executada localmente com Docker e publicada manualmente em uma instância EC2 conectada a um banco RDS na AWS.
+Documentação da Fase 1: diagrama de arquitetura, análise do monolito e discussão sobre o 12-Factor App. O ToggleMaster é uma API de *Feature Flags* (Flask + PostgreSQL) construída como um monolito, executada localmente com Docker e publicada manualmente em uma instância EC2 conectada a um banco RDS na AWS.
 
 ## 1. Link para o diagrama de arquitetura
 
@@ -8,7 +8,7 @@ Documentação da Fase 1: diagrama de arquitetura e discussão sobre o 12-Factor
 
 ![Diagrama de arquitetura AWS do ToggleMaster](docs/arquitetura/diagrama-arquitetura-aws.svg)
 
-## 2. Discussão sobre o 12-Factor App aplicada ao projeto
+## 2. Análise do monolito
 
 Análise feita sobre o código da aplicação (**app.py**, **Dockerfile**, **entrypoint.sh**, **docker-compose.yaml** e **requirements.txt**) e sobre o ambiente implantado na AWS (EC2 + RDS).
 
@@ -38,7 +38,9 @@ Trata-se de um monolito **pequeno e bem delimitado**: cobre um único domínio (
 
 **Conclusão:** para o objetivo da Fase 1 (validar a ideia e publicar rapidamente), o monolito é a escolha correta: menor custo, menor complexidade e entrega mais rápida. Suas limitações de escala, resiliência e autonomia de times são riscos conhecidos e aceitáveis nesta etapa, e serão tratados nas fases seguintes, quando a plataforma evoluir para um sistema distribuído.
 
-### 2.3 Matriz de conformidade com o 12-Factor App
+## 3. Discussão sobre o 12-Factor App aplicada ao projeto
+
+### 3.1 Matriz de conformidade
 
 A matriz abaixo avalia cada um dos 12 fatores. **Atende** significa que a prática já está presente no projeto; **Parcial** indica que ela existe, mas precisa de ajustes para um ambiente de produção mais robusto.
 
@@ -57,7 +59,7 @@ A matriz abaixo avalia cada um dos 12 fatores. **Atende** significa que a práti
 | XI | Logs | Parcial | A aplicação escreve em stdout (print e logs do Gunicorn), como recomendado. Na EC2 a saída é redirecionada para o arquivo gunicorn.log, sem centralização, rotação ou busca. | Enviar os logs para o CloudWatch Logs e adotar logging estruturado. |
 | XII | Processos administrativos | Atende | A criação do schema é um comando pontual (flask init-db), executado separadamente e de forma idempotente (CREATE TABLE IF NOT EXISTS), usando o mesmo código e a mesma configuração do app. | Adotar ferramenta de migrations (Alembic ou Flyway) para evolução do schema. |
 
-### 2.4 Resultado e prioridades de ajuste
+### 3.2 Resultado
 
 Dos 12 fatores, **6 estão atendidos** (I, II, IV, VI, VII e XII) e **6 são atendidos parcialmente** (III, V, VIII, IX, X e XI); nenhum está totalmente ausente. Os pontos que atendem refletem o que importa em um MVP: configuração por ambiente, aplicação stateless, banco como serviço externo e porta exposta pelo próprio processo. As lacunas concentram-se em **operação** (deploy, supervisão, logs e segredos), e não no desenho da aplicação.
 
